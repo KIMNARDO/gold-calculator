@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>금 계산기 | 1돈·1냥 몇 g? 오늘 금 시세로 계산 - 아이티덕후</title>
+<meta name="description" content="금 1돈(3.75g), 1냥(37.5g) 단위 환산과 오늘 금 시세 기준 금값 계산기. 24K·18K·14K 순도와 공제율까지 한 번에 계산합니다.">
+<meta property="og:title" content="금 계산기 | 1돈·1냥 몇 g? 오늘 금 시세로 계산">
+<meta property="og:description" content="돈·냥·g·트로이온스 환산 + 24K/18K/14K 금값 계산">
+<meta property="og:type" content="website">
+<style>
+  :root { --gold:#b8860b; --gold2:#f6e7b4; --ink:#222; --sub:#666; --line:#ddd; --bg:#fbf8f0; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif; color:var(--ink); background:var(--bg); line-height:1.55; }
+  header { background:linear-gradient(135deg,#8a6508,#d4a52a); color:#fff; padding:22px 16px 18px; text-align:center; }
+  header h1 { margin:0 0 4px; font-size:22px; }
+  header p { margin:0; font-size:14px; opacity:.92; }
+  main { max-width:640px; margin:0 auto; padding:14px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:14px; box-shadow:0 1px 3px rgba(0,0,0,.04); }
+  .card h2 { margin:0 0 12px; font-size:17px; color:#6b4e00; }
+  label { display:block; font-size:13px; color:var(--sub); margin:10px 0 4px; }
+  .row { display:flex; gap:8px; }
+  .row > * { flex:1; }
+  input, select { width:100%; font-size:17px; padding:10px 12px; border:1px solid #ccc; border-radius:8px; background:#fff; }
+  input:focus, select:focus { outline:2px solid var(--gold); border-color:var(--gold); }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .chips button, .btn { border:1px solid var(--gold); background:#fff; color:#6b4e00; border-radius:999px; padding:6px 12px; font-size:14px; cursor:pointer; }
+  .chips button:hover, .btn:hover { background:var(--gold2); }
+  .btn.primary { background:var(--gold); color:#fff; border-radius:8px; padding:9px 14px; }
+  table { width:100%; border-collapse:collapse; margin-top:12px; font-size:15px; }
+  th, td { border:1px solid var(--line); padding:9px 10px; text-align:left; }
+  th { background:#faf3dc; width:42%; font-weight:600; }
+  td { text-align:right; font-variant-numeric:tabular-nums; }
+  .big { font-size:24px; font-weight:700; color:#8a6508; text-align:center; margin:14px 0 2px; }
+  .muted { font-size:12.5px; color:#888; }
+  .status { font-size:13px; margin-top:6px; color:#555; }
+  .note { font-size:13px; color:#555; background:#fffbea; border-left:3px solid var(--gold); padding:10px 12px; border-radius:6px; }
+  a { color:#8a6508; }
+  footer { text-align:center; font-size:12.5px; color:#888; padding:6px 14px 28px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>금 계산기</h1>
+  <p>1돈·1냥 몇 g? 오늘 시세로 내 금값 바로 계산</p>
+</header>
+<main>
+
+  <section class="card">
+    <h2>① 단위 환산 (g · 돈 · 냥 · 온스)</h2>
+    <div class="row">
+      <div><label for="uVal">무게</label><input id="uVal" type="number" inputmode="decimal" value="1" min="0" step="any"></div>
+      <div><label for="uUnit">단위</label>
+        <select id="uUnit">
+          <option value="don" selected>돈 (3.75g)</option>
+          <option value="nyang">냥 (37.5g)</option>
+          <option value="g">g (그램)</option>
+          <option value="oz">트로이온스 (31.1035g)</option>
+          <option value="kg">kg</option>
+        </select></div>
+    </div>
+    <div class="chips">
+      <button data-v="1" data-u="don">1돈</button>
+      <button data-v="5" data-u="don">5돈</button>
+      <button data-v="1" data-u="nyang">1냥</button>
+      <button data-v="10" data-u="nyang">10냥</button>
+      <button data-v="1" data-u="oz">1온스</button>
+      <button data-v="1" data-u="kg">1kg</button>
+    </div>
+    <table>
+      <tr><th>그램(g)</th><td id="oG">-</td></tr>
+      <tr><th>돈</th><td id="oDon">-</td></tr>
+      <tr><th>냥</th><td id="oNyang">-</td></tr>
+      <tr><th>트로이온스</th><td id="oOz">-</td></tr>
+    </table>
+    <p class="muted">기준: 1돈 = 3.75g, 1냥 = 10돈 = 37.5g, 1트로이온스 = 31.1035g</p>
+  </section>
+
+  <section class="card">
+    <h2>② 금값 계산 (오늘 시세 기준)</h2>
+    <label for="pPrice">순금(24K) 1g 기준가 (원)</label>
+    <div class="row">
+      <div style="flex:2"><input id="pPrice" type="number" inputmode="numeric" min="0" step="1" placeholder="예: 174000"></div>
+      <div style="flex:1"><button class="btn primary" id="btnLive" style="width:100%">국제시세로 채우기</button></div>
+    </div>
+    <div class="status" id="liveStatus">국제 금 시세와 원/달러 환율을 불러오는 중...</div>
+
+    <div class="row">
+      <div><label for="wVal">내 금 무게</label><input id="wVal" type="number" inputmode="decimal" value="1" min="0" step="any"></div>
+      <div><label for="wUnit">단위</label>
+        <select id="wUnit">
+          <option value="don" selected>돈</option>
+          <option value="nyang">냥</option>
+          <option value="g">g</option>
+          <option value="oz">트로이온스</option>
+        </select></div>
+    </div>
+    <div class="row">
+      <div><label for="purity">순도</label>
+        <select id="purity">
+          <option value="0.9999" selected>24K 순금 (99.99%)</option>
+          <option value="0.75">18K (75%)</option>
+          <option value="0.585">14K (58.5%)</option>
+          <option value="custom">직접 입력</option>
+        </select></div>
+      <div><label for="purityCustom">직접 입력 (%)</label><input id="purityCustom" type="number" inputmode="decimal" placeholder="예: 91.6" disabled></div>
+    </div>
+    <label for="fee">공제·수수료 (%) <span class="muted">팔 때 업체가 빼는 비율, 모르면 0</span></label>
+    <input id="fee" type="number" inputmode="decimal" value="0" min="0" max="100" step="any">
+
+    <div class="big" id="oTotal">-</div>
+    <p class="muted" style="text-align:center;margin:0">함량 기준 추정 금액 (공제 반영)</p>
+    <table>
+      <tr><th>순금 환산 무게</th><td id="oPure">-</td></tr>
+      <tr><th>공제 전 금액</th><td id="oGross">-</td></tr>
+      <tr><th>순금 1돈 가격</th><td id="oDonPrice">-</td></tr>
+      <tr><th>순금 1냥 가격</th><td id="oNyangPrice">-</td></tr>
+    </table>
+    <p class="note" style="margin-top:12px">이 계산은 <b>금 함량 기준 추정치</b>예요. 실제로 금은방·거래소가 주는 돈은 그 업체의 18K·14K 전용 고시가, 감정 결과, 공제 항목에 따라 달라집니다. 18K·14K 전용 '팔 때' 가격을 알고 있다면 순도를 <b>24K</b>로 두고 그 가격을 1g 기준가로 넣으세요(순도를 두 번 곱하지 않기).</p>
+  </section>
+
+  <section class="card">
+    <h2>③ 시세 확인 바로가기</h2>
+    <p style="margin:0 0 6px">'국제시세로 채우기'는 국제 금 현물가(달러/온스)를 환율로 바꾼 값이라 국내 KRX 금시장 가격과 조금 다를 수 있어요. 국내 시세는 아래에서 확인하세요.</p>
+    <ul style="margin:6px 0 0;padding-left:20px">
+      <li><a href="https://m.stock.naver.com/marketindex/metals/M04020000" target="_blank" rel="noopener">네이버 증권 · 국내 금(KRX) 시세</a></li>
+      <li><a href="https://m.stock.naver.com/marketindex/metals/GCcv1" target="_blank" rel="noopener">네이버 증권 · 국제 금 시세</a></li>
+      <li><a href="https://blog.naver.com/PostList.naver?blogId=itduckhu&categoryNo=24" target="_blank" rel="noopener">아이티덕후 블로그 · 금 시세·금테크 글 모음</a></li>
+    </ul>
+  </section>
+</main>
+<footer>
+  만든 곳: <a href="https://blog.naver.com/itduckhu" target="_blank" rel="noopener">아이티덕후의 경제적 자유 (네이버 블로그)</a><br>
+  시세 데이터: gold-api.com (국제 금), exchangerate-api.com (환율). 투자 판단의 책임은 본인에게 있습니다.
+</footer>
+<script>
+  const G = { g:1, don:3.75, nyang:37.5, oz:31.1035, kg:1000 };
+  const $ = id => document.getElementById(id);
+  const fmt = (n, d=2) => isFinite(n) ? n.toLocaleString('ko-KR', {maximumFractionDigits:d}) : '-';
+  const won = n => isFinite(n) ? Math.round(n).toLocaleString('ko-KR') + '원' : '-';
+
+  function convert() {
+    const v = parseFloat($('uVal').value) || 0;
+    const g = v * G[$('uUnit').value];
+    $('oG').textContent = fmt(g, 3) + ' g';
+    $('oDon').textContent = fmt(g / G.don, 3) + ' 돈';
+    $('oNyang').textContent = fmt(g / G.nyang, 4) + ' 냥';
+    $('oOz').textContent = fmt(g / G.oz, 4) + ' oz';
+  }
+  function calc() {
+    const price = parseFloat($('pPrice').value);
+    const w = (parseFloat($('wVal').value) || 0) * G[$('wUnit').value];
+    let pur = $('purity').value;
+    pur = pur === 'custom' ? (parseFloat($('purityCustom').value) || 0) / 100 : parseFloat(pur);
+    const fee = Math.min(Math.max(parseFloat($('fee').value) || 0, 0), 100) / 100;
+    const pure = w * pur;
+    $('oPure').textContent = fmt(pure, 3) + ' g (' + fmt(pure / G.don, 3) + '돈)';
+    if (!isFinite(price) || price <= 0) {
+      ['oGross','oDonPrice','oNyangPrice'].forEach(id => $(id).textContent = '-');
+      $('oTotal').textContent = '1g 기준가를 넣어주세요';
+      return;
+    }
+    const gross = pure * price;
+    $('oGross').textContent = won(gross);
+    $('oTotal').textContent = won(gross * (1 - fee));
+    $('oDonPrice').textContent = won(price * G.don);
+    $('oNyangPrice').textContent = won(price * G.nyang);
+  }
+  let livePerGram = null;
+  async function loadLive(fill) {
+    const st = $('liveStatus');
+    try {
+      const [gRes, fxRes] = await Promise.all([
+        fetch('https://api.gold-api.com/price/XAU'),
+        fetch('https://open.er-api.com/v6/latest/USD')
+      ]);
+      const gold = await gRes.json();
+      const fx = await fxRes.json();
+      const usdOz = gold.price, krw = fx.rates.KRW;
+      livePerGram = usdOz * krw / G.oz;
+      const t = new Date(gold.updatedAt).toLocaleString('ko-KR', {timeZone:'Asia/Seoul'});
+      st.innerHTML = '국제 금 ' + fmt(usdOz, 2) + '달러/온스 × 환율 ' + fmt(krw, 2) + '원 ÷ 31.1035 = <b>1g ' + won(livePerGram) + '</b> <span class="muted">(' + t + ' 기준, 국내 시세와 차이 있음)</span>';
+      if (fill || !$('pPrice').value) { $('pPrice').value = Math.round(livePerGram); calc(); }
+    } catch (e) {
+      st.textContent = '실시간 시세를 불러오지 못했어요. 국내 금 시세(1g)를 직접 입력해 주세요.';
+    }
+  }
+  document.querySelectorAll('.chips button').forEach(b => b.addEventListener('click', () => {
+    $('uVal').value = b.dataset.v; $('uUnit').value = b.dataset.u; convert();
+  }));
+  ['uVal','uUnit'].forEach(id => $(id).addEventListener('input', convert));
+  ['pPrice','wVal','wUnit','purity','purityCustom','fee'].forEach(id => $(id).addEventListener('input', calc));
+  $('purity').addEventListener('change', () => { $('purityCustom').disabled = $('purity').value !== 'custom'; calc(); });
+  $('btnLive').addEventListener('click', () => loadLive(true));
+  convert(); calc(); loadLive(false);
+</script>
+</body>
+</html>
